@@ -7,6 +7,7 @@ This tool was built to provide more detailed driving and earnings metrics than i
 Overview
 
 This tool allows you to input your driving statistics and your total earnings for a selected time period from the Driving Stats tab. It calculates a range of additional metrics based on the data provided. Each metric includes a tooltip that provides the formula used to calculate it.
+
 Technologies Used
 
     HTML: Defines the structure of the web page and organizes the input and output sections.

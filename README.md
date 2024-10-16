@@ -2,11 +2,11 @@
 
 Rideshare calculator
 
-This tool was built to provide more detailed driving and earnings metrics than those offered by Lyft.
+This tool was built to provide more detailed driving and earnings metrics than is currently offered by Lyft. It could be adapted to be used for Uber or any other kind of rideshare platform.
 
 Overview
 
-This tool allows you to input your driving statistics and your total earnings for a selected time period from the Driving Stats tab. It calculates a range of additional metrics based on the data provided. Each metric includes a tooltip that explains the formula used to calculate it.
+This tool allows you to input your driving statistics and your total earnings for a selected time period from the Driving Stats tab. It calculates a range of additional metrics based on the data provided. Each metric includes a tooltip that provides the formula used to calculate it.
 Technologies Used
 
     HTML: Defines the structure of the web page and organizes the input and output sections.

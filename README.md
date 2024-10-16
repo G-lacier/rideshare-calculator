@@ -18,7 +18,7 @@ Technologies Used
 How to Use
 
     Enter your driving statistics from Lyft's Driving Stats tab, including your total earnings for the time period you wish to analyze.
-    Click Calculate Metrics to compute the additional metrics.
+    Click Calculate Metrics to generate the additional metrics.
     Review the metrics in the results section. Hover over each metric to see the formula used.
 
 Features

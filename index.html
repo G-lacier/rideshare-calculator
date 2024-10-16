@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rideshare Metrics Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        #input-section, #output-section {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        label {
+            display: inline-block;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 5px;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        h2, h3 {
+            color: #34495e;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        #output-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        @media screen and (max-width: 600px) {
+            label, input {
+                width: 100%;
+                display: block;
+            }
+            input {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Rideshare Metrics Calculator</h1>
+    <div id="input-section">
+        <h2>Input Your Data</h2>
+        <label for="totalEarnings">Total Earnings ($):</label>
+        <input type="number" id="totalEarnings" step="0.01" min="0"><br><br>
+
+        <label for="ridesCompleted">Rides Completed:</label>
+        <input type="number" id="ridesCompleted" min="0"><br><br>
+
+        <label for="ridesRejected">Rides Rejected:</label>
+        <input type="number" id="ridesRejected" min="0"><br><br>
+
+        <label for="onlineHours">Online Time:</label>
+        <input type="number" id="onlineHours" min="0" placeholder="Hours">
+        <input type="number" id="onlineMinutes" min="0" max="59" placeholder="Minutes"><br><br>
+
+        <label for="bookedHours">Booked Time:</label>
+        <input type="number" id="bookedHours" min="0" placeholder="Hours">
+        <input type="number" id="bookedMinutes" min="0" max="59" placeholder="Minutes"><br><br>
+
+        <label for="bookedMiles">Booked Miles:</label>
+        <input type="number" id="bookedMiles" step="0.01" min="0"><br><br>
+    </div>
+    <button onclick="calculateMetrics()">Calculate Metrics</button>
+    <div id="output-section">
+        <!-- Calculated metrics will be displayed here -->
+    </div>
+    <script>
+        function calculateMetrics() {
+            // Retrieve input values
+            const totalEarnings = parseFloat(document.getElementById('totalEarnings').value);
+            const ridesCompleted = parseInt(document.getElementById('ridesCompleted').value);
+            const ridesRejected = parseInt(document.getElementById('ridesRejected').value);
+            const onlineHours = parseInt(document.getElementById('onlineHours').value);
+            const onlineMinutes = parseInt(document.getElementById('onlineMinutes').value);
+            const bookedHours = parseInt(document.getElementById('bookedHours').value);
+            const bookedMinutes = parseInt(document.getElementById('bookedMinutes').value);
+            const bookedMiles = parseFloat(document.getElementById('bookedMiles').value);
+
+            // Input validation
+            if (isNaN(totalEarnings) || isNaN(ridesCompleted) || isNaN(ridesRejected) ||
+                isNaN(onlineHours) || isNaN(onlineMinutes) || isNaN(bookedHours) ||
+                isNaN(bookedMinutes) || isNaN(bookedMiles)) {
+                alert('Please fill in all fields with valid numbers.');
+                return;
+            }
+
+            if (totalEarnings < 0 || ridesCompleted < 0 || ridesRejected < 0 ||
+                onlineHours < 0 || onlineMinutes < 0 || onlineMinutes >= 60 ||
+                bookedHours < 0 || bookedMinutes < 0 || bookedMinutes >= 60 ||
+                bookedMiles < 0) {
+                alert('Please enter valid positive numbers. Minutes should be between 0 and 59.');
+                return;
+            }
+
+            // Convert times to decimal hours
+            const onlineTime = onlineHours + (onlineMinutes / 60);
+            const bookedTime = bookedHours + (bookedMinutes / 60);
+
+            // Additional validation
+            if (bookedTime > onlineTime) {
+                alert('Booked Time cannot be greater than Online Time.');
+                return;
+            }
+
+            if (ridesCompleted === 0 || bookedTime === 0 || onlineTime === 0 || bookedMiles === 0) {
+                alert('Rides Completed, Booked Time, Online Time, and Booked Miles must be greater than zero.');
+                return;
+            }
+
+            // Calculations
+            const totalRequests = ridesCompleted + ridesRejected;
+            const acceptanceRate = (ridesCompleted / totalRequests) * 100;
+            const rejectionRate = (ridesRejected / totalRequests) * 100;
+            const rejectionToAcceptanceRatio = ridesRejected / ridesCompleted;
+            const earningsPerRide = totalEarnings / ridesCompleted;
+            const earningsPerBookedHour = totalEarnings / bookedTime;
+            const earningsPerOnlineHour = totalEarnings / onlineTime;
+            const earningsPerBookedMile = totalEarnings / bookedMiles;
+            const earningsPerRequest = totalEarnings / totalRequests;
+            const averageBookedMilesPerRide = bookedMiles / ridesCompleted;
+            const averageBookedTimePerRide = (bookedTime / ridesCompleted) * 60; // minutes
+            const averageOnlineTimePerRide = (onlineTime / ridesCompleted) * 60; // minutes
+            const utilizationRate = (bookedTime / onlineTime) * 100;
+            const totalIdleTime = onlineTime - bookedTime;
+            const percentageTimeSpentWaiting = ((onlineTime - bookedTime) / onlineTime) * 100;
+            const averageSpeedDuringBookedTime = bookedMiles / bookedTime;
+            const averageWaitingTimePerRide = ((onlineTime - bookedTime) / ridesCompleted) * 60; // minutes
+            const ridesPerOnlineHour = ridesCompleted / onlineTime;
+            const ridesPerBookedHour = ridesCompleted / bookedTime;
+            const averageEarningsPerMinuteOnline = totalEarnings / (onlineTime * 60);
+            const averageEarningsPerMinuteBooked = totalEarnings / (bookedTime * 60);
+            const idleTimePerRide = (totalIdleTime / ridesCompleted) * 60; // minutes
+            const earningsPerIdleHour = totalEarnings / totalIdleTime;
+
+            // Display results
+            let output = `
+            <h2>Calculated Metrics</h2>
+
+            <h3>Ride Requests and Acceptance Metrics</h3>
+            <p><strong>Total Requests:</strong> ${totalRequests}</p>
+            <p><strong>Acceptance Rate:</strong> ${acceptanceRate.toFixed(2)}%</p>
+            <p><strong>Rejection Rate:</strong> ${rejectionRate.toFixed(2)}%</p>
+            <p><strong>Rejection to Acceptance Ratio:</strong> ${rejectionToAcceptanceRatio.toFixed(2)}</p>
+
+            <h3>Time Metrics</h3>
+            <p><strong>Average Booked Time per Ride:</strong> ${averageBookedTimePerRide.toFixed(2)} minutes</p>
+            <p><strong>Average Online Time per Ride:</strong> ${averageOnlineTimePerRide.toFixed(2)} minutes</p>
+            <p><strong>Average Waiting Time per Ride:</strong> ${averageWaitingTimePerRide.toFixed(2)} minutes</p>
+            <p><strong>Utilization Rate:</strong> ${utilizationRate.toFixed(2)}%</p>
+            <p><strong>Percentage of Time Spent Waiting:</strong> ${percentageTimeSpentWaiting.toFixed(2)}%</p>
+            <p><strong>Total Idle Time:</strong> ${totalIdleTime.toFixed(2)} hours</p>
+
+            <h3>Distance Metrics</h3>
+            <p><strong>Average Booked Miles per Ride:</strong> ${averageBookedMilesPerRide.toFixed(2)} miles</p>
+            <p><strong>Average Speed during Booked Time:</strong> ${averageSpeedDuringBookedTime.toFixed(2)} mph</p>
+
+            <h3>Earnings Metrics</h3>
+            <p><strong>Earnings per Ride:</strong> \$${earningsPerRide.toFixed(2)}</p>
+            <p><strong>Earnings per Booked Hour:</strong> \$${earningsPerBookedHour.toFixed(2)}</p>
+            <p><strong>Earnings per Online Hour:</strong> \$${earningsPerOnlineHour.toFixed(2)}</p>
+            <p><strong>Earnings per Booked Mile:</strong> \$${earningsPerBookedMile.toFixed(2)}</p>
+            <p><strong>Earnings per Request:</strong> \$${earningsPerRequest.toFixed(2)}</p>
+            <p><strong>Average Earnings per Minute Online:</strong> \$${averageEarningsPerMinuteOnline.toFixed(3)}</p>
+            <p><strong>Average Earnings per Minute Booked:</strong> \$${averageEarningsPerMinuteBooked.toFixed(3)}</p>
+            <p><strong>Earnings per Idle Hour:</strong> \$${earningsPerIdleHour.toFixed(2)}</p>
+
+            <h3>Productivity Metrics</h3>
+            <p><strong>Rides per Online Hour:</strong> ${ridesPerOnlineHour.toFixed(2)} rides/hour</p>
+            <p><strong>Rides per Booked Hour:</strong> ${ridesPerBookedHour.toFixed(2)} rides/hour</p>
+            <p><strong>Idle Time per Ride:</strong> ${idleTimePerRide.toFixed(2)} minutes</p>
+            `;
+
+            document.getElementById('output-section').innerHTML = output;
+        }
+    </script>
+</body>
+</html>

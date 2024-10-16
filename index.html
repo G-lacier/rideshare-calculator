@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Rideshare Metrics Calculator</title>
+    <!-- Include Tippy.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
+    <!-- Your CSS Styles -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,6 +61,12 @@
             border-radius: 10px;
         }
 
+        .metric {
+            position: relative;
+            cursor: pointer;
+            border-bottom: 1px dashed #999;
+        }
+
         @media screen and (max-width: 600px) {
             label, input {
                 width: 100%;
@@ -97,6 +106,9 @@
     <div id="output-section">
         <!-- Calculated metrics will be displayed here -->
     </div>
+    <!-- Include Popper.js and Tippy.js -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
     <script>
         function calculateMetrics() {
             // Retrieve input values
@@ -165,45 +177,77 @@
             const idleTimePerRide = (totalIdleTime / ridesCompleted) * 60; // minutes
             const earningsPerIdleHour = totalEarnings / totalIdleTime;
 
-            // Display results
+            // Display results with tooltips
             let output = `
             <h2>Calculated Metrics</h2>
 
             <h3>Ride Requests and Acceptance Metrics</h3>
-            <p><strong>Total Requests:</strong> ${totalRequests}</p>
-            <p><strong>Acceptance Rate:</strong> ${acceptanceRate.toFixed(2)}%</p>
-            <p><strong>Rejection Rate:</strong> ${rejectionRate.toFixed(2)}%</p>
-            <p><strong>Rejection to Acceptance Ratio:</strong> ${rejectionToAcceptanceRatio.toFixed(2)}</p>
+            <p><strong>Total Requests:</strong> <span class="metric" data-tippy-content="Total Requests = Rides Completed + Rides Rejected">
+                ${totalRequests}</span></p>
+            <p><strong>Acceptance Rate:</strong> <span class="metric" data-tippy-content="Acceptance Rate = (Rides Completed / Total Requests) × 100%">
+                ${acceptanceRate.toFixed(2)}%</span></p>
+            <p><strong>Rejection Rate:</strong> <span class="metric" data-tippy-content="Rejection Rate = (Rides Rejected / Total Requests) × 100%">
+                ${rejectionRate.toFixed(2)}%</span></p>
+            <p><strong>Rejection to Acceptance Ratio:</strong> <span class="metric" data-tippy-content="Rejection to Acceptance Ratio = Rides Rejected / Rides Completed">
+                ${rejectionToAcceptanceRatio.toFixed(2)}</span></p>
 
             <h3>Time Metrics</h3>
-            <p><strong>Average Booked Time per Ride:</strong> ${averageBookedTimePerRide.toFixed(2)} minutes</p>
-            <p><strong>Average Online Time per Ride:</strong> ${averageOnlineTimePerRide.toFixed(2)} minutes</p>
-            <p><strong>Average Waiting Time per Ride:</strong> ${averageWaitingTimePerRide.toFixed(2)} minutes</p>
-            <p><strong>Utilization Rate:</strong> ${utilizationRate.toFixed(2)}%</p>
-            <p><strong>Percentage of Time Spent Waiting:</strong> ${percentageTimeSpentWaiting.toFixed(2)}%</p>
-            <p><strong>Total Idle Time:</strong> ${totalIdleTime.toFixed(2)} hours</p>
+            <p><strong>Average Booked Time per Ride:</strong> <span class="metric" data-tippy-content="(Booked Time / Rides Completed) × 60">
+                ${averageBookedTimePerRide.toFixed(2)} minutes</span></p>
+            <p><strong>Average Online Time per Ride:</strong> <span class="metric" data-tippy-content="(Online Time / Rides Completed) × 60">
+                ${averageOnlineTimePerRide.toFixed(2)} minutes</span></p>
+            <p><strong>Average Waiting Time per Ride:</strong> <span class="metric" data-tippy-content="((Online Time - Booked Time) / Rides Completed) × 60">
+                ${averageWaitingTimePerRide.toFixed(2)} minutes</span></p>
+            <p><strong>Utilization Rate:</strong> <span class="metric" data-tippy-content="(Booked Time / Online Time) × 100%">
+                ${utilizationRate.toFixed(2)}%</span></p>
+            <p><strong>Percentage of Time Spent Waiting:</strong> <span class="metric" data-tippy-content="((Online Time - Booked Time) / Online Time) × 100%">
+                ${percentageTimeSpentWaiting.toFixed(2)}%</span></p>
+            <p><strong>Total Idle Time:</strong> <span class="metric" data-tippy-content="Total Idle Time = Online Time - Booked Time">
+                ${totalIdleTime.toFixed(2)} hours</span></p>
 
             <h3>Distance Metrics</h3>
-            <p><strong>Average Booked Miles per Ride:</strong> ${averageBookedMilesPerRide.toFixed(2)} miles</p>
-            <p><strong>Average Speed during Booked Time:</strong> ${averageSpeedDuringBookedTime.toFixed(2)} mph</p>
+            <p><strong>Average Booked Miles per Ride:</strong> <span class="metric" data-tippy-content="Booked Miles / Rides Completed">
+                ${averageBookedMilesPerRide.toFixed(2)} miles</span></p>
+            <p><strong>Average Speed during Booked Time:</strong> <span class="metric" data-tippy-content="Booked Miles / Booked Time">
+                ${averageSpeedDuringBookedTime.toFixed(2)} mph</span></p>
 
             <h3>Earnings Metrics</h3>
-            <p><strong>Earnings per Ride:</strong> \$${earningsPerRide.toFixed(2)}</p>
-            <p><strong>Earnings per Booked Hour:</strong> \$${earningsPerBookedHour.toFixed(2)}</p>
-            <p><strong>Earnings per Online Hour:</strong> \$${earningsPerOnlineHour.toFixed(2)}</p>
-            <p><strong>Earnings per Booked Mile:</strong> \$${earningsPerBookedMile.toFixed(2)}</p>
-            <p><strong>Earnings per Request:</strong> \$${earningsPerRequest.toFixed(2)}</p>
-            <p><strong>Average Earnings per Minute Online:</strong> \$${averageEarningsPerMinuteOnline.toFixed(3)}</p>
-            <p><strong>Average Earnings per Minute Booked:</strong> \$${averageEarningsPerMinuteBooked.toFixed(3)}</p>
-            <p><strong>Earnings per Idle Hour:</strong> \$${earningsPerIdleHour.toFixed(2)}</p>
+            <p><strong>Earnings per Ride:</strong> <span class="metric" data-tippy-content="Total Earnings / Rides Completed">
+                \$${earningsPerRide.toFixed(2)}</span></p>
+            <p><strong>Earnings per Booked Hour:</strong> <span class="metric" data-tippy-content="Total Earnings / Booked Time">
+                \$${earningsPerBookedHour.toFixed(2)}</span></p>
+            <p><strong>Earnings per Online Hour:</strong> <span class="metric" data-tippy-content="Total Earnings / Online Time">
+                \$${earningsPerOnlineHour.toFixed(2)}</span></p>
+            <p><strong>Earnings per Booked Mile:</strong> <span class="metric" data-tippy-content="Total Earnings / Booked Miles">
+                \$${earningsPerBookedMile.toFixed(2)}</span></p>
+            <p><strong>Earnings per Request:</strong> <span class="metric" data-tippy-content="Total Earnings / Total Requests">
+                \$${earningsPerRequest.toFixed(2)}</span></p>
+            <p><strong>Average Earnings per Minute Online:</strong> <span class="metric" data-tippy-content="Total Earnings / (Online Time × 60)">
+                \$${averageEarningsPerMinuteOnline.toFixed(3)}</span></p>
+            <p><strong>Average Earnings per Minute Booked:</strong> <span class="metric" data-tippy-content="Total Earnings / (Booked Time × 60)">
+                \$${averageEarningsPerMinuteBooked.toFixed(3)}</span></p>
+            <p><strong>Earnings per Idle Hour:</strong> <span class="metric" data-tippy-content="Total Earnings / Total Idle Time">
+                \$${earningsPerIdleHour.toFixed(2)}</span></p>
 
             <h3>Productivity Metrics</h3>
-            <p><strong>Rides per Online Hour:</strong> ${ridesPerOnlineHour.toFixed(2)} rides/hour</p>
-            <p><strong>Rides per Booked Hour:</strong> ${ridesPerBookedHour.toFixed(2)} rides/hour</p>
-            <p><strong>Idle Time per Ride:</strong> ${idleTimePerRide.toFixed(2)} minutes</p>
+            <p><strong>Rides per Online Hour:</strong> <span class="metric" data-tippy-content="Rides Completed / Online Time">
+                ${ridesPerOnlineHour.toFixed(2)} rides/hour</span></p>
+            <p><strong>Rides per Booked Hour:</strong> <span class="metric" data-tippy-content="Rides Completed / Booked Time">
+                ${ridesPerBookedHour.toFixed(2)} rides/hour</span></p>
+            <p><strong>Idle Time per Ride:</strong> <span class="metric" data-tippy-content="(Total Idle Time / Rides Completed) × 60">
+                ${idleTimePerRide.toFixed(2)} minutes</span></p>
             `;
 
+            // Insert the output into the page
             document.getElementById('output-section').innerHTML = output;
+
+            // Initialize Tippy.js on elements with class 'metric'
+            tippy('.metric', {
+                theme: 'light-border',
+                animation: 'fade',
+                arrow: true,
+                delay: [100, 100],
+            });
         }
     </script>
 </body>
